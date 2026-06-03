@@ -1,0 +1,272 @@
+1. What is ORM?
+
+ORM = Object Relational Mapper
+
+It connects: C# Objects ↔ Database Tables
+
+Without ORM: SELECT * FROM student
+
+With ORM: context.Students.ToList();
+
+Using Entity Framework Core:
+
+Less SQL writing
+Faster development
+Easier CRUD operations
+Strong typing
+Works with LINQ
+Easy relationship handling
+
+2. What is DbContext?
+
+DbContext is:
+
+Main bridge between application and database
+Responsible for:
+Connection
+Query execution
+Saving changes
+Tracking entities
+
+Without DbContext:
+
+EF Core cannot connect to DB
+Cannot track changes
+Cannot save data
+
+3. What is Entity?
+
+Entity = C# class mapped to database table
+
+Example:
+
+public class Employee
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+Rules for Entities
+Class name → Table name
+Properties → Columns
+Primary key usually:
+Id
+EmployeeId
+
+
+4. What is DbSet?
+
+Represents database table.
+
+public DbSet<Employee> Employees { get; set; }
+
+Meaning:
+
+Employees table
+Why DbSet is Used?
+
+Used for:
+
+Insert
+Read
+Update
+Delete
+
+Without DbSet:
+
+EF cannot access table
+
+5. CRUD Operations
+
+CRUD = Create Read Update Delete
+
+INSERT:
+
+using(var context = new AppDbContext())
+{
+    Employee emp = new Employee();
+    emp.Name = "Kanishka";
+
+    context.Employees.Add(emp);
+
+    context.SaveChanges();
+}
+
+What Happens Internally?
+
+EF converts to:
+
+INSERT INTO Employees(Name) VALUES('Kanishka')
+
+READ
+var data = context.Employees.ToList();
+
+SQL:
+
+SELECT * FROM Employees
+
+UPDATE
+var emp = context.Employees.Find(1);
+
+emp.Name = "Updated Name";
+
+context.SaveChanges();
+
+SQL:
+
+UPDATE Employees SET Name='Updated Name' WHERE Id=1
+
+
+DELETE
+var emp = context.Employees.Find(1);
+
+context.Employees.Remove(emp);
+
+context.SaveChanges();
+
+Why SaveChanges() Important?
+
+Until: SaveChanges()
+
+Nothing goes to database.
+
+EF only tracks changes in memory.
+
+6. What is LINQ?
+
+LINQ = Language Integrated Query
+
+Used to query data using C# syntax.
+
+Why LINQ?
+
+Instead of writing SQL: SELECT * FROM Employees WHERE salary > 5000
+
+You write: context.Employees.Where(x => x.Salary > 5000)
+
+Common LINQ Methods
+Where: var data = context.Employees.Where(x => x.Name == "Kanishka").ToList();
+FirstOrDefault: var emp = context.Employees.FirstOrDefault(x => x.Id == 1);
+OrderBy: var data = context.Employees.OrderBy(x => x.Name).ToList();
+Select: var names = context.Employees.Select(x => x.Name).ToList();
+
+Why LINQ is Powerful?
+Strong typing
+IntelliSense support
+Cleaner code
+Easy filtering
+
+7. What is Migration?
+
+Migration manages database schema changes.
+
+Example:
+You add new property: public string Email { get; set; }
+Migration updates DB automatically.
+
+Commands:
+Create Migration: Add-Migration InitialCreate    --->Creates migration file.
+Apply to Database: Update-Database    --->Creates tables in DB.
+
+Why Migrations?
+
+Without migration: Must manually alter tables
+With migration: EF handles schema updates
+
+8. Relationships:
+
+Why Relationships?
+
+Used to: 
+Connect tables
+Retrieve related data
+Include() ---->   var data = context.Employees.Include(x => x.Department).ToList();
+Loads related department.
+
+9. Data Annotations:
+
+Attributes used for: Validation and Mapping
+
+Example
+using System.ComponentModel.DataAnnotations;
+
+public class Employee
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    public string Name { get; set; }
+}
+
+Common Annotations
+Annotation	Purpose
+Key	        Primary Key
+Required	NOT NULL
+MaxLength	Max size
+NotMapped	Ignore property
+ForeignKey	Foreign key
+
+10. Fluent API:
+
+What is Fluent API? Alternative to annotations.
+
+Used inside: OnModelCreating()
+
+Example:
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Employee>()
+        .Property(x => x.Name)
+        .HasMaxLength(100);
+}
+
+Why Fluent API?
+
+Used for:
+
+Complex configurations
+Relationships
+Constraints
+More powerful than annotations.
+
+11. Async Methods
+
+Asynchronous means tasks can happen independently
+
+Concurrent (Task B runs while Task A is processing)
+
+Example: var data = await context.Employees.ToListAsync();
+
+Common Async Methods
+Normal    	Async
+ToList()	ToListAsync()
+SaveChanges()	SaveChangesAsync()
+Find()	  	FindAsync()
+
+14. Dependency Injection: Rather than creating objects automatically objects will be provided.
+While creating objects without DI if any issue comes by the created objects difficult to solve/change/maintain
+
+15. IQueryable vs IEnumerable
+
+IEnumerable fetches all data into your application's memory before filtering, while IQueryable translates your query into a language like SQL to filter directly on the database.
+
+IEnumerable : It will take the whole data into memory and starts filters (like where condition) this will get stored as memory which may take time where Iqueryable filters the data and takes it to memory.
+
+If you prematurely convert your query to an IEnumerable (e.g., using .ToList() or .AsEnumerable()) before applying your filters, EF Core pulls every single row in the table into memory, and then filters those results in your application. This can cause massive performance bottlenecks or out-of-memory exceptions.
+
+Example: Iqueryable: context.Employees.Where(x => x.Salary > 5000).ToList();
+
+IEnumerable: context.Employees.ToList().Where(x => x.Salary > 5000);
+
+16. Deferred Execution
+
+EF queries execute only when needed.
+
+Example
+var query = context.Employees.Where(x => x.Id > 5);
+
+SQL not executed.
+
+Only after:  query.ToList();
