@@ -13,3 +13,52 @@ Creates migration files
 Generates SQL
 
 Update Database:  Update-Database
+
+Next:
+Create Controller
+
+Right click:
+
+Controllers
+→ Add
+→ Controller
+
+Choose:
+
+MVC Controller with views, using Entity Framework
+SELECT OPTIONS
+Option	Value
+Model Class	Employee
+DbContext	ApplicationDbContext
+
+Click:
+
+Add
+MAGIC HAPPENS HERE
+
+Visual Studio automatically generates:
+
+CRUD operations
+Views
+Controller code
+
+This is called:
+
+Scaffolding
+
+Run Project
+
+Press:
+
+F5
+
+Open:
+
+/Employees
+
+Now you can:
+
+Create employee
+Edit
+Delete
+View list
