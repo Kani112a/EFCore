@@ -1,0 +1,15 @@
+Create ASP.NET Core Web App (Model-View-Controller) 
+appsettings.json   ---> Initialize Connectionstring
+Add model in that set columns
+Create DbContext --> In this set database
+Register DbContext   ---->Program.cs   --->Call the connectionstring  Tells EF Core: (Use PostgreSQL database)
+Create Migration    --->Add-Migration InitialCreate
+WHAT HAPPENS?
+
+EF Core:
+
+Checks model classes
+Creates migration files
+Generates SQL
+
+Update Database:  Update-Database
