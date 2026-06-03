@@ -62,3 +62,25 @@ Create employee
 Edit
 Delete
 View list
+
+If Scaffloding fails:
+
+Install the required packages:
+Install-Package Microsoft.EntityFrameworkCore.Tools -Version 8.0.8
+Install-Package Microsoft.EntityFrameworkCore.Design -Version 8.0.8
+Install-Package Microsoft.VisualStudio.Web.CodeGeneration.Design -Version 8.0.7
+Install-Package Npgsql.EntityFrameworkCore.PostgreSQL -Version 8.0.4
+
+Install Scaffolding Tool
+
+Run in terminal:
+
+dotnet tool install -g dotnet-aspnet-codegenerator
+
+To see this error : run the below command 
+dotnet aspnet-codegenerator controller -name EmployeesController -m Employee -dc ApplicationDbContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries   
+
+
+And the main thing is .csproj file should be inside the folder 
+like: folder/filename.csproj 
+Not like: folder1/folder2/filename.cs.proj
